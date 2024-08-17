@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas Animation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      #overlay {
+        transition: opacity 1s ease-out;
+      }
+      body::-webkit-scrollbar{
+        width: 10px;
+    }
+    body::-webkit-scrollbar-track{
+        background-color: #18181B;
+    }
+    body::-webkit-scrollbar-thumb{
+        border-radius: 1rem;
+        background-color: #757575;
+    }
+
+    html.lenis, html.lenis body {
+    height: auto;
+    }
+
+    .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+    }
+
+    .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+    }
+
+    .lenis.lenis-stopped {
+    overflow: hidden;
+    }
+
+    .lenis.lenis-smooth iframe {
+    pointer-events: none;
+}
+
+    /* navbar styles */
+    nav{
+  background-color: white;
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+}
+nav ul{
+  width: 100%;
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+nav li{
+  height: 50px;
+}
+nav a{
+  height: 100%;
+  padding: 0 30px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  color: black;
+}
+nav a:hover{
+  background-color: #f0f0f02a;
+}
+nav li:first-child{
+  margin-right: auto;
+}
+.sidebar{
+  position: fixed;
+  top: 0; 
+  right: 0;
+  height: 100vh;
+  width: 250px;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  box-shadow: -10px 0 10px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.sidebar li{
+  width: 100%;
+}
+.sidebar a{
+  width: 100%;
+}
+.menu-button{
+  display: none;
+}
+@media(max-width: 800px){
+  .hideOnMobile{
+    display: none;
+  }
+  .menu-button{
+    display: block;
+  }
+}
+@media(max-width: 400px){
+  .sidebar{
+    width: 100%;
+  }
+}
+
+    </style>
+  </head>
+  <body class="relative">
+    <!-- Black overlay that covers the entire screen -->
+    <div
+      id="overlay"
+      class="fixed inset-0 bg-black z-50 flex items-center justify-center"
+    >
+      <p class="text-white text-xl">Loading...</p>
+    </div>
+
+    <div class="main w-full bg-zinc-900 text-white">
+      <div class="parent relative w-full h-[1400vh] bg-zinc-900">
+        <div class="child sticky top-0 left-0 w-full h-screen bg-zinc-900 ## overflow-y-hidden overflow-x-hidden">
+          <canvas class="w-full h-full" id="canvas"></canvas>
+          <nav class="bg-transparent z-[100] backdrop-blur-md absolute top-0 w-screen">
+            <!-- mobile first approach -->
+            <ul class="sidebar">
+              <li onclick=hideSidebar()><a class="z-[110]" href="#"><svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 96 960 960" width="26"><path d="m249 849-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z"/></svg></a></li>
+              <li><a class="text-white" href="#">Blog</a></li>
+              <li><a class="text-white" href="#">Products</a></li>
+              <li><a class="text-white" href="#">About</a></li>
+              <li><a class="text-white" href="#">Forum</a></li>
+              <li><a class="text-white" href="#">Login</a></li>
+            </ul>
+            <!-- pc approach -->
+            <ul class="bg-transparent z-[100] backdrop-blur-3xl">
+              <li><a class="text-white" href="#">Abhishek</a></li>
+              <li class="hideOnMobile"><a class="sidebarA text-white" href="#">Blog</a></li>
+              <li class="hideOnMobile"><a class="sidebarA text-white" href="#">Products</a></li>
+              <li class="hideOnMobile"><a class="sidebarA text-white" href="#">About</a></li>
+              <li class="hideOnMobile"><a class="sidebarA text-white" href="#">Forum</a></li>
+              <li class="hideOnMobile"><a class="sidebarA text-white" href="#">Login</a></li>
+              <li class="menu-button" ><a href="#"><svg  class="text-white" xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 96 960 960" width="26"><path d="M120 816v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/></svg></a></li>
+            </ul>
+          </nav>
+          <!-- Text part -->
+          <div class=" animate1 absolute z-[2] text-white bottom-10 w-1/2 left-10 ">
+            <h1 class="leading-20 font-[100] text-xl md:text-3xl mb-2">&copy; 2024 Abhishek</h1>
+            <h1 class="text-2xl md:text-4xl">Shapping brands -> Crafting Motions</h1>
+          </div>
+          <div class="animate2 absolute texst-2 flex z-[2] text-white bottom-10 w-1/2 right-20 sm:right-10 text-right opacity-0">
+            <h1 class="leading-20 font-[100] uppercase text-xl md:text-4xl lg:text-6xl">
+                Transforming Visions
+            </h1>
+            <h1 class="text-[0.9rem] md:text-xl w-1/2">
+                Building identity and inspiring action. Sculpting digital experiance resonate 
+            </h1>
+          </div>
+          <div class="animate3 absolute texst-2 z-[2] text-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center opacity-0">
+            <h1 class="leading-20 font-[400] uppercase text-6xl">
+                Elevating Aesthetics
+            </h1>
+            <h1 class="text-xl">
+                Crafting Solutions and Exploring New Horizons. Evolving narratives and elevating aesthetics in every project.
+            </h1>
+          </div>
+          <!-- sidebar part -->
+          <div class="panel w-3/4 sm:w-1/3 translate-x-full h-screen bg-white text-black absolute right-0 top-0 z-[99] p-10">
+            <h3 class="paneleton text-md md:text-xl font-[100]">&copy; 2024 Abhishek</h3>
+            <p class="paneleton mt-4 md:mt-10 text-sm lg:text-xl">
+                Sculpting Digital
+                Transforming visions into digital realities. Weaving stories that captitive and innovative.
+                Exploring new possibilities with a focus on narrative evolution. Crafting solutions that engage and elevate.  
+            </p>
+            <button class="paneleton border-[1px] px-3 py- border-[#555] font-[100] mt-6">
+                Get Reviews
+            </button>
+
+            <div class="paneleton absolute bottom-10">
+                <h3 class="text-xl">Innovative Design</h3>
+                <p class="text-sm mt-3">Connecting ideas to faster creativity. Designing impactful experiances
+                    that                    
+                    resonate
+                    Feel free to mix and match these sections to suit your website's design needs!
+                </p>
+                <button class="bg-black text-white px-7 text-sm mt-4 py-4 font-[100] capitalize">
+                    experiance
+                </button>
+            </div>
+
+          </div>
+
+          <div class="absolute z-[2] panelism text-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-xl md:text-4xl lg:text-6xl tracking-tighter opacity-0" >
+            &copy;its
+            <span class="line w-2 md:w-5 lg:w-10 h-1 bg-white inline-block">
+            </span>
+            avishek
+        </div>
+
+        </div>
+      </div>
+      <div class="bg-white text-black ">
+        <h1 class="px-8 py-3 text-3xl font-semibold leading-relaxed tracking-tighter">&reg;Recent Work By Abhishek.</h1>
+        <div class="w-1/2 p-3 headings flex flex-col gap-5 mt-2">
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Zonk Blerp</h3>
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Flibble Sprock</h3>
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Wibble Zurf</h3>
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Quarn Blap</h3>
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Snapr Woogle</h3>
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Frizzle Bump</h3>
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Plonk Zorp</h3>
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Slibber Klop</h3>
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Glonk Dribble</h3>
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Twizzle Blurb</h3>
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Skribble Zink</h3>
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Quibble Plop</h3>
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Blizzy Nerf</h3>
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Fuzzle Droop</h3>
+                <h3 class="effect-light text-xl font-semibold sm:text-3xl md:text-4xl lg:text-3xl">Krinkle Splap</h3>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- gsap cdn -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+      integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <!-- scroll Tigger cdn -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+      integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <!-- lenis cdn -->
+    <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script> 
+
+    <script>
+
+    function showSidebar(){
+        const sidebar = document.querySelector('.sidebar')
+        sidebar.style.display = 'flex'
+        }
+    function hideSidebar(){
+        const sidebar = document.querySelector('.sidebar')
+        sidebar.style.display = 'none'
+        }
+
+
+      const frames = {
+        currentIndex: 0,
+        maxIndex: 1344,
+      };
+
+      let imagesLoaded = 0;
+      let images = [];
+      const canvas = document.querySelector("#canvas");
+      const context = canvas.getContext("2d");
+      const overlay = document.getElementById("overlay");
+
+      function preloadImages() {
+        for (let i = 1; i <= frames.maxIndex; i++) {
+          const imageUrl = `./Video-Extracts/frame_${i
+        //   const imageUrl = `./Video-Extracts-2/frame_${i
+            .toString()
+            // .padStart(4, "0")}.png`;
+            .padStart(4, "0")}.jpeg`;
+          const img = new Image();
+          img.src = imageUrl;
+
+          img.onload = function () {
+            imagesLoaded++;
+            if (imagesLoaded === frames.maxIndex) {
+              console.log("All images loaded");
+              hideOverlay(); // Hide the overlay when all images are loaded
+              startAnimation(); // Start animation after all images are preloaded
+            }
+          };
+
+          img.onerror = function () {
+            console.error(`Failed to load image at ${img.src}`);
+          };
+
+          images.push(img);
+        }
+      }
+
+      function loadImage(index) {
+        const img = images[index];
+        if (!img || !img.complete) {
+          console.error(`Image at index ${index} is not loaded`);
+          return; // Exit if the image is not available or loaded
+        }
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const scaleX = canvas.width / img.width;
+        const scaleY = canvas.height / img.height;
+
+        const scale = Math.max(scaleX,scaleY) 
+
+
+        const newWidth = img.width * scale;
+        const newHeight = img.height * scale;
+
+        // Calculate offsets to center the image
+        const offsetX = (canvas.width - newWidth) / 2;
+        const offsetY = (canvas.height - newHeight) / 2;
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = "high";
+        context.drawImage(img, offsetX, offsetY, newWidth, newHeight);
+      }
+
+      function startAnimation() {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".parent",
+            start: "top top",
+            scrub: 3,
+          },
+        });
+
+        tl
+            .to(frames, updateFrame(70),"first")
+            .to(".animate1", {opacity:0, ease:"linear"},"first")
+
+            .to(frames,updateFrame(140),"second")
+            .to(".animate2", {opacity:1, ease:"linear"},"second")
+
+            .to(frames,updateFrame(210),"third")
+            .to(".animate2", {opacity:1, ease:"linear"},"third")
+
+            .to(frames,updateFrame(280),"four")
+            .to(".animate2", {opacity:0, ease:"linear"},"four")
+
+            .to(frames,updateFrame(350),"five")
+            .to(".animate3", {opacity:1, ease:"linear"},"five")
+
+            .to(frames,updateFrame(420),"six")
+            .to(".animate3", {opacity:1, ease:"linear"},"six")
+
+            .to(frames,updateFrame(590),"seven")
+            .to(".animate3", {opacity:0, ease:"linear"},"seven")
+
+            .to(frames,updateFrame(610),"eight")
+            .to(".panel", {x: "0%", ease:"expo"},"eight")
+
+            .to(frames,updateFrame(615),"nine")
+            .to(".panel", {x: "0%", ease:"expo"},"nine")
+
+            .to(frames,updateFrame(620),"ten")
+            .to(".panel", {opacity:0, ease:"expo"},"ten")
+
+            .to(frames,updateFrame(890),"eleven")
+            .to("canvas", {scale:.65 , ease:"linear"},"eleven")
+
+            .to(frames,updateFrame(920),"tveleve")
+            .to(".panelism", {opacity:1  , ease:"expo"},"tveleve")
+
+            .to(frames,updateFrame(950),"tveleve")
+            .to(".panelism span", {width: 200, ease:"expo"},"tveleve")
+
+            .to(frames,updateFrame(1100),"thirteen")
+            .to("canvas", {scale: 1 , ease:"linear"},"thirteen")
+
+            .to(frames,updateFrame(1200),"fourteen")
+            .to(".panelism", {scale: 1.5 , ease:"circ"},"fourteen")
+
+            .to(frames,updateFrame(1300),"fifteen")
+            .to(".panelism", {scale: 1.2 , ease:"circ"},"fifteen")
+
+            .to(frames,updateFrame(1344),"sixteen")
+            .to(".panelism", {scale: 1.2 , ease:"circ"},"sixteen")
+
+            .to(frames,updateFrame(1346),"seventeen")
+            .to(".panelism", {scale: 1 , ease:"linear"},"seventeen")
+      }
+
+      // Display the first image until all images are loaded
+      function showFirstImage() {
+        const firstImage = new Image();
+        firstImage.src = `./Video-Extracts/frame_0001.jpeg`;
+
+        firstImage.onload = function () {
+          images[0] = firstImage; // Ensure the first image is stored in the array
+          loadImage(0); // Display the first image immediately
+        };
+
+        firstImage.onerror = function () {
+          console.error(`Failed to load the first image.`);
+        };
+      }
+
+      // Hide the overlay when all images are loaded
+      function hideOverlay() {
+        overlay.style.opacity = "0";
+        setTimeout(() => {
+          overlay.style.display = "none";
+        }, 1000); // Remove the overlay from the DOM after the fade-out effect
+      }
+
+      // Handle window resizing
+      window.addEventListener("resize", () => {
+        loadImage(frames.currentIndex);
+      });
+
+    //   only to anmate till given no.of frames
+      function updateFrame(index){
+        return  {
+          currentIndex: index,
+          onUpdate: function () {
+            loadImage(Math.floor(frames.currentIndex));
+          }
+        }
+      }
+
+
+    //   extra
+      document.querySelectorAll(".headings h3").forEach(function(ele){
+        gsap.from(ele,{
+            scrollTrigger:{
+                trigger: ele,
+                start: "top 85%", // Element starts animating when its top reaches 75% of the viewport
+                end: "bottom 25%",
+                scrub:2
+            },
+            opacity:0.2
+        })
+      })
+
+
+    // lenis 
+    const lenis = new Lenis()
+
+    function raf(time) {
+    lenis.raf(time)
+    requestAnimationFrame(raf)
+    }
+
+    requestAnimationFrame(raf)
+
+    // Preload images and show the first image initially
+    showFirstImage();
+    preloadImages();
+
+    </script>
+  </body>
+</html>
